@@ -24,8 +24,11 @@ if __name__ == '__main__':
 
     success_list = []
 
-    nnsolver = NNSolver("./saved_models/")
+    # nnsolver = NNSolver("./saved_models/hiddenLayer0_epochs003_samples200k/")
+    nnsolver = NNSolver("./saved_models/testModel/")
+    # nnsolver = NNSolver("./saved_models/basicModel/")
     for i in range(10):
+        print(i)
         this_sudoku = sudoku_provider.get_sudoku()
 
         modified_solution = this_sudoku[1]

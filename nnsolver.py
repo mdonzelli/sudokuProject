@@ -33,10 +33,15 @@ class NNSolver:
             return False
 
         current_solution = self._initial_matrix.flatten()
+        counter = 0
         while not evaluate(current_solution.reshape(9, 9), True):
+            print(i, " ", end="")
             mutable_mask = (current_solution == 0)
 
             one_hot_problem_flat = NNSolver.to_one_hot(current_solution)
+
+            model_input = one_hot_problem_flat.reshape(1, *one_hot_problem_flat.shape)
+            print("model input shape:", model_input.shape)
 
             prediction = self._model.predict(one_hot_problem_flat.reshape(1, *one_hot_problem_flat.shape))
             max_prob = 0.
