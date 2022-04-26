@@ -35,7 +35,8 @@ class NNSolver:
         current_solution = self._initial_matrix.flatten()
         counter = 0
         while not evaluate(current_solution.reshape(9, 9), True):
-            print(i, " ", end="")
+            print(counter, " ", end="")
+            counter += 1
             mutable_mask = (current_solution == 0)
 
             one_hot_problem_flat = NNSolver.to_one_hot(current_solution)
