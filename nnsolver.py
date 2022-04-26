@@ -41,18 +41,21 @@ class NNSolver:
 
             one_hot_problem_flat = NNSolver.to_one_hot(current_solution)
 
-            model_input = one_hot_problem_flat.reshape(1, *one_hot_problem_flat.shape)
-            print("model input shape:", model_input.shape)
-
             prediction = self._model.predict(one_hot_problem_flat.reshape(1, *one_hot_problem_flat.shape))
             max_prob = 0.
             max_idx = None
             for i, entry in enumerate(prediction):
                 if mutable_mask[i]:
                     local_max = np.amax(entry)
-                    if local_max > max_prob:
+                    # do not accept max probability if this points to zero
+                    if local_max > max_prob and np.argmax(prediction[i]) != 0:
                         max_prob = local_max
                         max_idx = i
+
+            # no suitable prediction other than zero has been found
+            if max_idx is None:
+                print("no suitable prediction other than zero has been found")
+                return False
 
             current_solution[max_idx] = np.argmax(prediction[max_idx])
             self._solution = current_solution.reshape(9, 9)
