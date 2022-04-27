@@ -6,28 +6,28 @@ from nnsolver import NNSolver
 if __name__ == '__main__':
 
     sudoku_provider = SudokuProvider("sudoku.csv")
-    sudoku_provider.fetch_from_file(0, 10)
+    sudoku_provider.fetch_from_file(0, 50)
     this_sudoku = sudoku_provider.get_sudoku()
-    print(type(this_sudoku))
-    this_sudoku = sudoku_provider.get_sudoku()
-    print(this_sudoku)
     mySolver = Solver(this_sudoku[0])
     success = mySolver.solve()
-    print("fund solution:", success)
+    print("found solution:", success)
     # mySolver.write_log()
-    print("ref solution", this_sudoku[1])
-    print("solver solution", mySolver.solution())
+    print("ref solution")
+    print(this_sudoku[1])
+    print("solver solution")
+    print(mySolver.solution)
 
-    print("======")
-
-    sudoku_provider.fetch_from_file(11000, 12000)
+    print("\n\n======\n")
 
     success_list = []
 
-    nnsolver = NNSolver("./saved_models/hiddenLayer0_epochs003_samples200k/")
-    # nnsolver = NNSolver("./saved_models/testModel/")
-    # nnsolver = NNSolver("./saved_models/basicModel/")
-    for i in range(10):
+    nnsolver = NNSolver("./saved_models/cnn_model4/")
+    nnsolver.pad_for_cnn = True
+
+    # nnsolver = NNSolver("./saved_models/hiddenLayer0_epochs003_samples200k/")
+    # nnsolver.pad_for_cnn = False
+
+    for i in range(3):
         print(i)
         this_sudoku = sudoku_provider.get_sudoku()
 
@@ -41,11 +41,12 @@ if __name__ == '__main__':
         success = nnsolver.solve()
         success_list.append(success)
 
+        print("solver solution")
+        print(nnsolver.solution)
+        print("ref solution")
+        print(this_sudoku[1])
+
     print(sum(success_list), "/", len(success_list))
-
-
-
-
     print("bye")
 
 

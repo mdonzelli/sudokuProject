@@ -14,6 +14,7 @@ class Solver:
         self._i = 0
         self._j = 0
 
+    @property
     def solution(self):
         return self._solution
 
@@ -44,7 +45,7 @@ class Solver:
                     if not success:
                         return True
                 else:
-                    pass # continue
+                    pass  # continue
             else:
                 self._solution[self._i, self._j] = 0
                 success = self.revert_to_allowed_idx()

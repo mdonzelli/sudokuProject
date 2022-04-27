@@ -11,6 +11,7 @@ class NNSolver:
         self._model = tf.keras.models.load_model(model_path)
         self._initial_matrix = None
         self._solution = None
+        self._pad_for_cnn = False
 
     @property
     def solution(self):
@@ -39,9 +40,13 @@ class NNSolver:
             counter += 1
             mutable_mask = (current_solution == 0)
 
-            one_hot_problem_flat = NNSolver.to_one_hot(current_solution)
+            if self._pad_for_cnn:
+                one_hot_problem = NNSolver.to_one_hot(NNSolver.pad_matrix(current_solution.reshape(9, 9)))
+                print("shape", one_hot_problem.shape)
+            else:
+                one_hot_problem = NNSolver.to_one_hot(current_solution).reshape(81, 10)
 
-            prediction = self._model.predict(one_hot_problem_flat.reshape(1, *one_hot_problem_flat.shape))
+            prediction = self._model.predict(one_hot_problem.reshape(1, *one_hot_problem.shape))
             max_prob = 0.
             max_idx = None
             for i, entry in enumerate(prediction):
@@ -63,11 +68,24 @@ class NNSolver:
                 return False
         return True
 
+    @property
+    def pad_for_cnn(self):
+        return self._pad_for_cnn
+
+    @pad_for_cnn.setter
+    def pad_for_cnn(self, value):
+        self._pad_for_cnn = value
 
     @staticmethod
     def to_one_hot(sudoku):
-
-        sudoku_flat = sudoku.reshape(81, 1)
+        shape = sudoku.shape
+        sudoku_flat = sudoku.reshape((sudoku.flatten().shape[0], 1))
         one_hot_encoder = OneHotEncoder(sparse=False)
-        one_hot_flat = one_hot_encoder.fit_transform(sudoku_flat)
-        return one_hot_flat
+        one_hot = one_hot_encoder.fit_transform(sudoku_flat)
+        return one_hot.reshape(list(shape) + [10])
+
+    @staticmethod
+    def pad_matrix(matrix):
+        output = np.concatenate((matrix, matrix, matrix), axis=0)
+        output = np.concatenate((output, output, output), axis=1)
+        return output[5:-5, 5:-5]
